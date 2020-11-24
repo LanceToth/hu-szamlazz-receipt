@@ -1,1 +1,1 @@
-# hu-szamlazz-receipt
+# szamlazz.hu Nyugta kiállítás app
