@@ -4,6 +4,7 @@
 		<tr>
 			<th>Id</th>
 			<th>Kelt</th>
+			<th>Előtag</th>
 			<th>Fizetési mód</th>
 			<th>Bruttó összeg</th>
 		</tr>
@@ -11,6 +12,7 @@
 			<tr>
 				<td><a href="/receipt/${receipt.id}">${receipt.id}</a></td>
 				<td><a href="/receipt/${receipt.id}">${receipt.kelt}</a></td>
+				<td><a href="/receipt/${receipt.id}">${receipt.elotag}</a></td>
 				<td><a href="/receipt/${receipt.id}">${receipt.fizmod}</a></td>
 				<td><a href="/receipt/${receipt.id}">${receipt.brutto} ${receipt.penznem}</a></td>
 			</tr>

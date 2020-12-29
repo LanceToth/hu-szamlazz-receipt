@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+form {
+   display: table;
+}
+
+.row {
+   display: table-row;
+}
+
+input, label{
+  display: table-cell;
+}

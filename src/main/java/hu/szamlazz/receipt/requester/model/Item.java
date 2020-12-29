@@ -55,8 +55,8 @@ public class Item {
 	private Double brutto;
 
 	@ManyToOne
-	@JoinColumn(name = "receipt_id")
-	private Receipt receipt;
+	@JoinColumn(name = "receipt_id", nullable = false)
+	private Receipt receipt = null;
 
 	public long getId() {
 		return id;
@@ -161,10 +161,12 @@ public class Item {
 		}
 	}
 
+	
+	
 	@Override
 	public String toString() {
 		return "Item [id=" + id + ", megnevezes=" + megnevezes + ", mennyiseg=" + mennyiseg + ", nettoEgysegar="
-				+ nettoEgysegar + "]";
+				+ nettoEgysegar + ", receipt=" + receipt + "]";
 	}
 
 }

@@ -1,18 +1,34 @@
 <#import "utils.ftl" as utils />
+<link rel='stylesheet' href='/css/form.css'>
 <a href="/list">Return to list</a>
-<form action="/savereceipt" method="post">
-	<div>
-		<label>id</label>
-		<label>elotag</label>
-		<label>fizmod</label>
-		<label>penznem</label>
-		<label>pdf_sablon</label>
-	</div>
-	<div>
+<#if 0 != (receipt.id)!0>
+	<form action="/updatereceipt/${receipt.id}" method="post">
+<#else>
+	<form action="/savereceipt" method="post">
+</#if>
+
+	<div class="row">
+		<label for="id">id</label>
 		<input type=text name="id" value="${(receipt.id)!""}" disabled/>
+	</div>
+	<div class="row">
+		<label for="kelt">kelt</label>
+		<input type=date name="kelt" value="${(receipt.kelt)!""}" disabled/>
+	</div>
+	<div class="row">
+		<label for="elotag">elotag</label>
 		<input type=text name="elotag" value="${(receipt.elotag)!""}" />
-  		<@utils.select "fizmod" receipt.fizmod fizmodList false/>
+	</div>
+	<div class="row">
+		<label for="fizmod">fizmod</label>
+		<@utils.select "fizmod" receipt.fizmod fizmodList false/>
+	</div>
+	<div class="row">
+		<label for="penznem">penznem</label>
 		<input type=text name="penznem" value="${(receipt.penznem)!""}" />
+	</div>
+	<div class="row">
+		<label for="pdfSablon">pdfSablon</label>
 		<@utils.select "pdfSablon" receipt.pdfSablon pdfSablonList true/>		
 	</div>
 	

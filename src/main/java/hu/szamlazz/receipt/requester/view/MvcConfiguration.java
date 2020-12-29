@@ -9,6 +9,7 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
@@ -40,5 +41,13 @@ public class MvcConfiguration implements WebMvcConfigurer {
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable("/index.html");//this refuses to work, ignore -lance
     }
+	
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		if (!registry.hasMappingForPattern("/**")) {
+			registry.addResourceHandler("/**").addResourceLocations(
+					"classpath:/static/");
+		}
+	}
 	
 }

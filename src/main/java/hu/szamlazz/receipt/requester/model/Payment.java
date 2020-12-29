@@ -36,8 +36,8 @@ public class Payment {
 	private Double osszeg;
 
 	@ManyToOne
-	@JoinColumn(name = "receipt_id")
-	private Receipt receipt;
+	@JoinColumn(name = "receipt_id", nullable = false)
+	private Receipt receipt = null;
 
 	public long getId() {
 		return id;
@@ -73,7 +73,8 @@ public class Payment {
 
 	@Override
 	public String toString() {
-		return "Payment [id=" + id + ", fizetoeszkoz=" + fizetoeszkoz + ", osszeg=" + osszeg + "]";
+		return "Payment [id=" + id + ", fizetoeszkoz=" + fizetoeszkoz + ", osszeg=" + osszeg + ", receipt=" + receipt
+				+ "]";
 	}
 
 }

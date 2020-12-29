@@ -124,12 +124,26 @@ public class Receipt {
 		this.items = items;
 	}
 
+	public boolean addItem(Item e) {
+		if(items != null) {
+			return items.add(e);
+		}
+		return false;
+	}
+
 	public Set<Payment> getPayments() {
 		return payments;
 	}
 
 	public void setPayments(Set<Payment> payments) {
 		this.payments = payments;
+	}
+
+	public boolean addPayment(Payment e) {
+		if(payments != null) {
+		return payments.add(e);
+		}
+		return false;
 	}
 
 	public LocalDate getKelt() {
@@ -146,6 +160,13 @@ public class Receipt {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public void copy(Receipt source) {
+		this.elotag = source.elotag;
+		this.fizmod = source.fizmod;
+		this.penznem = source.penznem;
+		this.pdfSablon = source.pdfSablon;
 	}
 
 	/**

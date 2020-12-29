@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="TRACE">
+	<properties>
+		<property name="logdir">/temp/receipt.requester/logs</property>
+	</properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        
+        <RollingFile name="AppAppender" fileName="${logdir}/app.log"
+	      filePattern="${logdir}/app-%d{yyyy-dd-MM}-%i.log.gz">
+	        <PatternLayout>
+	            <Pattern>%d [%t] %p %c - %m%n</Pattern>
+	        </PatternLayout>
+	        <Policies>
+	            <OnStartupTriggeringPolicy />
+	            <SizeBasedTriggeringPolicy size="50 MB" />
+	        </Policies>
+	        <DefaultRolloverStrategy max="20" />
+	    </RollingFile>
+	    
+	    <RollingFile name="ControllerAppender" fileName="${logdir}/controller.log"
+	      filePattern="${logdir}/controller-%d{yyyy-dd-MM}-%i.log.gz">
+	        <PatternLayout>
+	            <Pattern>%d [%t] %p %c - %m%n</Pattern>
+	        </PatternLayout>
+	        <Policies>
+	            <OnStartupTriggeringPolicy />
+	            <SizeBasedTriggeringPolicy size="50 MB" />
+	        </Policies>
+	        <DefaultRolloverStrategy max="20" />
+	    </RollingFile>
+	    
+	    <RollingFile name="ModelAppender" fileName="${logdir}/model.log"
+	      filePattern="${logdir}/model-%d{yyyy-dd-MM}-%i.log.gz">
+	        <PatternLayout>
+	            <Pattern>%d [%t] %p %c - %m%n</Pattern>
+	        </PatternLayout>
+	        <Policies>
+	            <OnStartupTriggeringPolicy />
+	            <SizeBasedTriggeringPolicy size="50 MB" />
+	        </Policies>
+	        <DefaultRolloverStrategy max="20" />
+	    </RollingFile>
+	    
+	    <RollingFile name="ViewAppender" fileName="${logdir}/view.log"
+	      filePattern="${logdir}/view-%d{yyyy-dd-MM}-%i.log.gz">
+	        <PatternLayout>
+	            <Pattern>%d [%t] %p %c - %m%n</Pattern>
+	        </PatternLayout>
+	        <Policies>
+	            <OnStartupTriggeringPolicy />
+	            <SizeBasedTriggeringPolicy size="50 MB" />
+	        </Policies>
+	        <DefaultRolloverStrategy max="20" />
+	    </RollingFile>
+    </Appenders>
+    
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+        </Root>
+        
+        <Logger name="AppLogger" level="TRACE">
+        	<AppenderRef ref="AppAppender" />
+    	</Logger>
+    	
+    	<Logger name="hu.szamlazz.receipt.requester.controller" level="TRACE">
+        	<AppenderRef ref="ControllerAppender" />
+    	</Logger>
+    	
+    	<Logger name="hu.szamlazz.receipt.requester.model" level="TRACE">
+        	<AppenderRef ref="ModelAppender" />
+    	</Logger>
+    	
+    	<Logger name="hu.szamlazz.receipt.requester.view" level="TRACE">
+        	<AppenderRef ref="ViewAppender" />
+    	</Logger>
+    </Loggers>
+</Configuration>
