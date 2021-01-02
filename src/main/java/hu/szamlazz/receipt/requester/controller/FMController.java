@@ -2,6 +2,8 @@ package hu.szamlazz.receipt.requester.controller;
 
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,7 @@ import hu.szamlazz.receipt.requester.model.Receipt.PdfSablon;
 import hu.szamlazz.receipt.requester.model.ReceiptRepository;
 import hu.szamlazz.receipt.requester.model.UserData;
 import hu.szamlazz.receipt.requester.model.UserDataRepository;
+import hu.szamlazz.receipt.requester.model.XmlNyugtaCreate;
 
 @Controller
 public class FMController {
@@ -141,13 +144,26 @@ public class FMController {
     	item.setReceipt(receipt);
     	
         model.addAttribute("item", item);
+        
+        try {
+        	XmlNyugtaCreate xml = new XmlNyugtaCreate(receipt, getUserData());
+			Utils.log(RequestHandler.getInstance().mashal(xml));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+        
         return "item";
     }
     
-    @PostMapping("/saveitem")
-	public String saveItem(Model model, Item item) {
+    @PostMapping("/saveitem/{id}")
+	public String saveItem(Model model, @PathVariable(value = "id") Long receiptId, Item item) {
     	String method = "saveItem";
     	Utils.log(method, "started");
+    	
+    	Receipt receipt = receiptRepository.findById(receiptId)
+				.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
+    	
+    	Utils.log(method, "loaded " + receipt);
     	
     	/*if(item.getReceipt() != null) {
     		Long  receiptId = item.getReceipt().getId();
@@ -158,9 +174,11 @@ public class FMController {
     		throw new IllegalArgumentException("Receipt not found");
     	}*/
     	
-    	item.getReceipt().addItem(item);
+    	item.setReceipt(receipt);
     	
-		item = itemRepository.save(item);
+    	receipt.addItem(item);
+		//item = itemRepository.save(item);
+    	receipt = receiptRepository.save(receipt);
 		
 		Utils.log(method, "saved " + item);
 		
@@ -231,6 +249,11 @@ public class FMController {
     
 	@RequestMapping("/userdata")
     public String getUserData(Model model) {
+		model.addAttribute("userdata", getUserData());
+        return "userdata";
+    }
+	
+	public UserData getUserData() {
 		List<UserData> userDataList = userDataRepository.findAll();
 		
 		UserData userData = null;
@@ -241,10 +264,8 @@ public class FMController {
 			userData = userDataList.get(0);
 		}
 		
-		model.addAttribute("userdata", userData);
-		
-        return "userdata";
-    }
+		return userData;
+	}
 	
 	@RequestMapping("/setuserdata")
     public String setUserData(Model model, UserData userData) {

@@ -1,16 +1,18 @@
 package hu.szamlazz.receipt.requester.controller;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
+import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 public class RequestHandler {
 	
-	private RequestHandler instance = null;
+	private static RequestHandler instance = null;
 	
 	private String JSESSIONID = null;
 	
@@ -18,7 +20,7 @@ public class RequestHandler {
 		
 	}
 	
-	public RequestHandler getInstance() {
+	public static RequestHandler getInstance() {
 		if(instance == null) {
 			instance = new RequestHandler();
 		}
@@ -63,6 +65,17 @@ public class RequestHandler {
 		    } catch(Exception e) {
 		        throw new RuntimeException(e);
 		    }
+	}
+	
+	public String mashal(Object object) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(object.getClass());
+	    Marshaller mar= context.createMarshaller();
+	    mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	    
+	    StringWriter sw = new StringWriter();
+	    mar.marshal(object, sw);
+
+	    return sw.toString();
 	}
 
 }

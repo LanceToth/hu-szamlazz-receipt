@@ -1,5 +1,6 @@
 package hu.szamlazz.receipt.requester.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -10,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -24,6 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "item")
 @EntityListeners(AuditingEntityListener.class)
+@XmlRootElement(name = "tetel")
 public class Item {
 
 	@Id
@@ -54,10 +58,11 @@ public class Item {
 	@Transient
 	private Double brutto;
 
-	@ManyToOne
-	@JoinColumn(name = "receipt_id", nullable = false)
+	@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name = "receipt_id", referencedColumnName = "id", insertable = false, updatable = true, nullable = false)
 	private Receipt receipt = null;
 
+	@XmlTransient
 	public long getId() {
 		return id;
 	}
@@ -142,6 +147,7 @@ public class Item {
 		this.brutto = brutto;
 	}
 
+	@XmlTransient
 	public Receipt getReceipt() {
 		return receipt;
 	}

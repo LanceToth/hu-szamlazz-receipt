@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,6 +25,7 @@ import hu.szamlazz.receipt.requester.model.Receipt.Fizmod;
 @Entity
 @Table(name = "payment")
 @EntityListeners(AuditingEntityListener.class)
+@XmlRootElement(name = "kifizetes")
 public class Payment {
 
 	@Id
@@ -39,6 +42,7 @@ public class Payment {
 	@JoinColumn(name = "receipt_id", nullable = false)
 	private Receipt receipt = null;
 
+	@XmlTransient
 	public long getId() {
 		return id;
 	}

@@ -1,7 +1,7 @@
 
 <link rel='stylesheet' href='/css/form.css'>
 <a href="/receipt/${(item.receipt.id)!""}">Vissza a nyugtára</a>
-<form action="/saveitem" method="post">
+<form action="/saveitem/${(item.receipt.id)!""}" method="post">
 	<input type=hidden name ="receipt" value ="${(item.receipt.id)!""}" />
 	<div class="row">
 		<label>id</label>

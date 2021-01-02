@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -13,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -27,19 +30,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "receipt")
 @EntityListeners(AuditingEntityListener.class)
-//@XmlRootElement(name = "fejlec")
+@XmlRootElement(name = "fejlec")
 public class Receipt {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-
-	/**
-	 * Nem kell adatbázisban tárolni, csak a kérés beküldésekor adjuk meg (bár kb
-	 * mindig igen lesz az értéke)
-	 */
-	@Transient
-	private Boolean pdfLetoltes = true;
 
 	@Column(name = "elotag", nullable = false)
 	private String elotag;
@@ -62,26 +58,19 @@ public class Receipt {
 	@Transient
 	Double brutto;
 
-	@OneToMany(mappedBy = "receipt")
+	@OneToMany(mappedBy = "receipt", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	private Set<Item> items = new HashSet<Item>();
 
 	@OneToMany(mappedBy = "receipt")
 	private Set<Payment> payments = new HashSet<Payment>();
 
+	@XmlTransient
 	public long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public Boolean getPdfLetoltes() {
-		return pdfLetoltes;
-	}
-
-	public void setPdfLetoltes(Boolean pdfLetoltes) {
-		this.pdfLetoltes = pdfLetoltes;
 	}
 
 	public String getElotag() {
@@ -116,6 +105,7 @@ public class Receipt {
 		this.pdfSablon = pdfSablon;
 	}
 
+	@XmlTransient
 	public Set<Item> getItems() {
 		return items;
 	}
@@ -131,6 +121,7 @@ public class Receipt {
 		return false;
 	}
 
+	@XmlTransient
 	public Set<Payment> getPayments() {
 		return payments;
 	}
@@ -146,6 +137,7 @@ public class Receipt {
 		return false;
 	}
 
+	@XmlTransient
 	public LocalDate getKelt() {
 		return kelt;
 	}
@@ -154,6 +146,7 @@ public class Receipt {
 		this.kelt = kelt;
 	}
 
+	@XmlTransient
 	public Status getStatus() {
 		return status;
 	}
@@ -174,6 +167,7 @@ public class Receipt {
 	 * 
 	 * @return tételösszeg
 	 */
+	@XmlTransient
 	public Double getBrutto() {
 		brutto = 0d;
 		for (Item item : items) {
