@@ -40,7 +40,7 @@
 </#if>
 
 <#if 0 != (receipt.id)!0>
-	<a href="/additem/${receipt.id}">Új tétel</a>
+	<br /><a href="/additem/${receipt.id}">Új tétel</a>
 	<#list receipt.items>
 		<table>
 			<tr>
@@ -51,17 +51,17 @@
 			</tr>
 			<#items as item>
 				<tr>
-					<td><a href="/item/${receipt.id}/${item.id}">${item.id}</a></td>
-					<td><a href="/item/${receipt.id}/${item.id}">${item.megnevezes}</a></td>
-					<td><a href="/item/${receipt.id}/${item.id}">${item.mennyiseg} ${item.mennyisegiEgyseg}</a></td>
-					<td><a href="/item/${receipt.id}/${item.id}">${item.brutto}</a></td>
+					<td><a href="/item/${item.id}">${item.id}</a></td>
+					<td><a href="/item/${item.id}">${item.megnevezes}</a></td>
+					<td><a href="/item/${item.id}">${item.mennyiseg} ${item.mennyisegiEgyseg}</a></td>
+					<td><a href="/item/${item.id}">${item.brutto} ${receipt.penznem}</a></td>
 				</tr>
 			</#items>
 		</table>
 	<#else><br />Nothing to list
 	</#list>
 	
-	<a href="/addpayment/${receipt.id}">Új fizetés</a>
+	<br /><a href="/addpayment/${receipt.id}">Új fizetés</a>
 	<#list receipt.payments>
 		<table>
 			<tr>
@@ -71,9 +71,9 @@
 			</tr>
 			<#items as payment>
 				<tr>
-					<td><a href="/payment/${receipt.id}/${payment.id}">${payment.id}</a></td>
-					<td><a href="/payment/${receipt.id}/${payment.id}">${payment.fizetoeszkoz}</a></td>
-					<td><a href="/payment/${receipt.id}/${payment.id}">${payment.osszeg}</a></td>
+					<td><a href="/payment/${payment.id}">${payment.id}</a></td>
+					<td><a href="/payment/${payment.id}">${payment.fizetoeszkoz}</a></td>
+					<td><a href="/payment/${payment.id}">${payment.osszeg} ${receipt.penznem}</a></td>
 				</tr>
 			</#items>
 		</table>

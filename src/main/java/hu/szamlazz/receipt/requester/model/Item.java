@@ -1,6 +1,5 @@
 package hu.szamlazz.receipt.requester.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -50,16 +49,16 @@ public class Item {
 	private Double afakulcs = 27d;
 
 	@Transient
-	private Double netto;
+	private Double netto = null;
 
 	@Transient
-	private Double afa;
+	private Double afa = null;
 
 	@Transient
-	private Double brutto;
+	private Double brutto = null;
 
-	@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name = "receipt_id", referencedColumnName = "id", insertable = false, updatable = true, nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "receipt_id", nullable = false)
 	private Receipt receipt = null;
 
 	@XmlTransient

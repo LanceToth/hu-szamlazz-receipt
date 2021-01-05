@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -58,7 +57,7 @@ public class Receipt {
 	@Transient
 	Double brutto;
 
-	@OneToMany(mappedBy = "receipt", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@OneToMany(mappedBy = "receipt")
 	private Set<Item> items = new HashSet<Item>();
 
 	@OneToMany(mappedBy = "receipt")
@@ -210,7 +209,15 @@ public class Receipt {
 
 	@Override
 	public String toString() {
-		return "Receipt [id=" + id + ", fizmod=" + fizmod + ", penznem=" + penznem + ", kelt=" + kelt + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Receipt [id=").append(id)
+		.append(", fizmod=").append(fizmod)
+		.append(", penznem=").append(penznem)
+		.append(", kelt=").append(kelt)
+		.append(", items=").append(items.size())
+		.append(", payments=").append(payments.size())
+		.append("]");
+		return builder.toString();
 	}
 
 	public enum PdfSablon {
