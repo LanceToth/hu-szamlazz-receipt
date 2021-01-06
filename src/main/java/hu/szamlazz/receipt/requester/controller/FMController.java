@@ -37,7 +37,10 @@ public class FMController {
     	String method = "getAllReceipts";
     	Utils.log(method, "started");
     	
-    	model.addAttribute("receipts", receiptRepository.findAll(Sort.by("id")));
+    	List<Receipt> list = receiptRepository.findAll(Sort.by("id"));
+    	Utils.log(method, "loaded " + list.size());
+    	
+    	model.addAttribute("receipts", list);
         return "list";
     }
     
@@ -98,10 +101,21 @@ public class FMController {
         return "redirect:/receipt/" + originalReceipt.getId();
     }
     
-    @PostMapping("/sendreceipt/{id}")
+    @RequestMapping("/sendreceipt/{id}")
 	public String sendReceipt(Model model, @PathVariable(value = "id") Long receiptId) {
+    	String method = "sendReceipt";
+    	Utils.log(method, "started");
+    	
     	Receipt receipt = receiptRepository.findById(receiptId)
     			.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
+    	Utils.log(method, "loaded " + receipt);
+    	
+    	try {
+        	XmlNyugtaCreate xml = new XmlNyugtaCreate(receipt, getUserData(method));
+			Utils.log(RequestHandler.getInstance().mashal(xml));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 		//response = sendxmltoserver
 		
 		/*Boolean sikeres = false; //= response.getBoolean("sikeres"); 
@@ -145,13 +159,6 @@ public class FMController {
     	
         model.addAttribute("item", item);
         
-        try {
-        	XmlNyugtaCreate xml = new XmlNyugtaCreate(receipt, getUserData());
-			Utils.log(RequestHandler.getInstance().mashal(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-        
         return "item";
     }
     
@@ -165,20 +172,9 @@ public class FMController {
     	
     	Utils.log(method, "loaded " + receipt);
     	
-    	/*if(item.getReceipt() != null) {
-    		Long  receiptId = item.getReceipt().getId();
-    		Receipt receipt = receiptRepository.findById(receiptId)
-    				.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
-    		item.setReceipt(receipt);
-    	}else {
-    		throw new IllegalArgumentException("Receipt not found");
-    	}*/
-    	
     	item.setReceipt(receipt);
     	
-    	receipt.addItem(item);
-		//item = itemRepository.save(item);
-    	receipt = receiptRepository.save(receipt);
+		item = itemRepository.save(item);
 		
 		Utils.log(method, "saved " + item);
 		
@@ -195,6 +191,23 @@ public class FMController {
         //return ResponseEntity.ok().body(phone);
         model.addAttribute("item", item);
         return "item";
+    }
+    
+    @PostMapping("/updateitem/{id}")
+    public String updateItem(Model model, @PathVariable(value="id") Long itemId, Item modifiedItem) throws Exception {
+    	String method = "updateItem";
+    	Utils.log(method, "started");
+    	
+    	Item originalItem = itemRepository.findById(itemId)
+    			.orElseThrow(() -> new IllegalArgumentException("Item " + itemId + " not found"));
+
+    	Utils.log(method, "modifying " + originalItem + " via " + modifiedItem);
+    	
+        originalItem.copy(modifiedItem);
+
+        Item updatedItem = itemRepository.save(originalItem);
+        Utils.log(method, "saved " + updatedItem);
+        return "redirect:/item/" + originalItem.getId();
     }
 
     //PAYMENT
@@ -218,15 +231,22 @@ public class FMController {
         return "payment";
     }
     
-    @PostMapping("/savepayment")
-	public String savePayment(Model model, Payment payment) {
+    @PostMapping("/savepayment/{id}")
+	public String savePayment(Model model, @PathVariable(value = "id") Long receiptId, Payment payment) {
     	String method = "savePayment";
     	Utils.log(method, "started");
+    	
+    	Receipt receipt = receiptRepository.findById(receiptId)
+				.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
+    	
+    	Utils.log(method, "loaded " + receipt);
+    	
+    	payment.setReceipt(receipt);
     	
 		payment = paymentRepository.save(payment);
 		Utils.log(method, "saved " + payment);
 		
-		return "redirect:/receipt/" + payment.getReceipt().getId();
+		return "redirect:/payment/" + payment.getId();
 	}
     
     @RequestMapping("/payment/{id}")
@@ -239,7 +259,24 @@ public class FMController {
         //return ResponseEntity.ok().body(phone);
         model.addAttribute("fizmodList", Fizmod.values());
         model.addAttribute("payment", payment);
-        return "receipt";
+        return "payment";
+    }
+    
+    @PostMapping("/updatepayment/{id}")
+    public String updatePayment(Model model, @PathVariable(value="id") Long paymentId, Payment modifiedPayment) throws Exception {
+    	String method = "updatePayment";
+    	Utils.log(method, "started");
+    	
+    	Payment originalPayment = paymentRepository.findById(paymentId)
+    			.orElseThrow(() -> new IllegalArgumentException("Payment " + paymentId + " not found"));
+
+    	Utils.log(method, "modifying " + originalPayment + " via " + modifiedPayment);
+    	
+        originalPayment.copy(modifiedPayment);
+
+        Payment updatedPayment = paymentRepository.save(originalPayment);
+        Utils.log(method, "saved " + updatedPayment);
+        return "redirect:/payment/" + originalPayment.getId();
     }
     
     //USERDATA
@@ -249,11 +286,13 @@ public class FMController {
     
 	@RequestMapping("/userdata")
     public String getUserData(Model model) {
-		model.addAttribute("userdata", getUserData());
+		String method = "getUserData";
+    	Utils.log(method, "started");
+		model.addAttribute("userdata", getUserData(method));
         return "userdata";
     }
 	
-	public UserData getUserData() {
+	public UserData getUserData(String method) {
 		List<UserData> userDataList = userDataRepository.findAll();
 		
 		UserData userData = null;
@@ -264,12 +303,23 @@ public class FMController {
 			userData = userDataList.get(0);
 		}
 		
+		Utils.log(method, "prepared " + userData);
+		
 		return userData;
 	}
 	
-	@RequestMapping("/setuserdata")
-    public String setUserData(Model model, UserData userData) {
-		userDataRepository.save(userData);
+	@PostMapping("/setuserdata")
+    public String setUserData(Model model, UserData modifiedUserData) {
+		String method = "setUserData";
+    	Utils.log(method, "started");
+		
+		UserData originalUserData = getUserData(method);
+		
+		Utils.log(method, "modifying " + originalUserData + " via " + modifiedUserData);
+		
+		originalUserData.setSzamlaagentkulcs(modifiedUserData.getSzamlaagentkulcs());
+		
+		userDataRepository.save(originalUserData);
 		
 		return "redirect:/userdata/";
 	}

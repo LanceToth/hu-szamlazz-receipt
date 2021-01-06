@@ -8,9 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -26,17 +23,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "userdata")
 @EntityListeners(AuditingEntityListener.class)
 @XmlRootElement(name = "beallitasok")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class UserData {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
 	private long id;
 	
-	@XmlElement(name = "szamlaagentkulcs")
 	@Column(name = "agent_key", nullable = false)
-	private String agentKey;
+	private String szamlaagentkulcs;
 
 	/**
 	 * Nem kell adatbázisban tárolni, csak a kérés beküldésekor adjuk meg (bár kb
@@ -45,6 +39,7 @@ public class UserData {
 	@Transient
 	private Boolean pdfLetoltes = true;
 	
+	@XmlTransient
 	public long getId() {
 		return id;
 	}
@@ -53,12 +48,12 @@ public class UserData {
 		this.id = id;
 	}
 
-	public String getAgentKey() {
-		return agentKey;
+	public String getSzamlaagentkulcs() {
+		return szamlaagentkulcs;
 	}
 
-	public void setAgentKey(String agentKey) {
-		this.agentKey = agentKey;
+	public void setSzamlaagentkulcs(String agentKey) {
+		this.szamlaagentkulcs = agentKey;
 	}
 
 	public Boolean getPdfLetoltes() {
@@ -67,5 +62,15 @@ public class UserData {
 
 	public void setPdfLetoltes(Boolean pdfLetoltes) {
 		this.pdfLetoltes = pdfLetoltes;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserData [id=").append(id)
+		.append(", szamlaagentkulcs=").append(szamlaagentkulcs)
+		.append(", pdfLetoltes=").append(pdfLetoltes)
+		.append("]");
+		return builder.toString();
 	}
 }

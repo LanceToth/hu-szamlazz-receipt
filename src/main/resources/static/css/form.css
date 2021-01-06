@@ -11,3 +11,22 @@ form {
 input, label{
   display: table-cell;
 }
+
+.F{
+	color: orange;
+	font-weight: bold;
+}
+
+.S{
+	color: green;
+	font-weight: bold;
+}
+
+.H{
+	color: red;
+	font-weight: bold;
+}
+
+.error{
+	color: red;
+}

@@ -1,4 +1,5 @@
 <a href="/addreceipt">Új nyugta</a>
+<a href="/userdata" style="float: right;">Beállítások</a>
 <#list receipts>
 	<table>
 		<tr>
@@ -18,5 +19,5 @@
 			</tr>
 		</#items>
 	</table>
- <#else><br />Nothing to list
+ <#else><br />Még nincs
 </#list>

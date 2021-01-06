@@ -5,3 +5,10 @@
     </#list>
 </select>
 </#macro>
+
+<#macro disablefields id status>
+<#assign hasid = (0 != (id)!0) />
+<#assign receiptsent = ("S" == (status)!"") />
+<#assign disabled = (hasid && receiptsent) />
+<#assign disabletag = disabled?string("disabled='disabled'","") />
+</#macro>

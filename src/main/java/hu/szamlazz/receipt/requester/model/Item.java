@@ -84,7 +84,6 @@ public class Item {
 
 	public void setMennyiseg(Double mennyiseg) {
 		this.mennyiseg = mennyiseg;
-		calculate();
 	}
 
 	public String getMennyisegiEgyseg() {
@@ -101,7 +100,6 @@ public class Item {
 
 	public void setNettoEgysegar(Double nettoEgysegar) {
 		this.nettoEgysegar = nettoEgysegar;
-		calculate();
 	}
 
 	public Double getAfakulcs() {
@@ -110,7 +108,6 @@ public class Item {
 
 	public void setAfakulcs(Double afakulcs) {
 		this.afakulcs = afakulcs;
-		calculate();
 	}
 
 	public Double getNetto() {
@@ -153,6 +150,14 @@ public class Item {
 
 	public void setReceipt(Receipt receipt) {
 		this.receipt = receipt;
+	}
+
+	public void copy(Item source) {
+		this.megnevezes = source.megnevezes;
+		this.mennyiseg = source.mennyiseg;
+		this.mennyisegiEgyseg = source.mennyisegiEgyseg;
+		this.nettoEgysegar = source.nettoEgysegar;
+		this.afakulcs = source.afakulcs;
 	}
 
 	/**

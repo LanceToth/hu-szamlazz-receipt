@@ -17,7 +17,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import hu.szamlazz.receipt.requester.model.Receipt.Fizmod;
 
 /**
- * Nyugta kifizetéseit tároló osztály
+ * 
+ * Nyugta kifizetéseit tároló osztály,
+ * ezeket adja össze a fej
  * 
  * @author Lance
  *
@@ -67,12 +69,18 @@ public class Payment {
 		this.osszeg = osszeg;
 	}
 
+	@XmlTransient
 	public Receipt getReceipt() {
 		return receipt;
 	}
 
 	public void setReceipt(Receipt receipt) {
 		this.receipt = receipt;
+	}
+
+	public void copy(Payment source) {
+		this.fizetoeszkoz = source.fizetoeszkoz;
+		this.osszeg = source.osszeg;
 	}
 
 	@Override

@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.SortNatural;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
@@ -58,9 +60,13 @@ public class Receipt {
 	Double brutto;
 
 	@OneToMany(mappedBy = "receipt")
+	@SortNatural
+	@OrderBy(clause = "id ASC")
 	private Set<Item> items = new HashSet<Item>();
 
 	@OneToMany(mappedBy = "receipt")
+	@SortNatural
+	@OrderBy(clause = "id ASC")
 	private Set<Payment> payments = new HashSet<Payment>();
 
 	@XmlTransient
