@@ -19,10 +19,13 @@ import hu.szamlazz.receipt.requester.model.PaymentRepository;
 import hu.szamlazz.receipt.requester.model.Receipt;
 import hu.szamlazz.receipt.requester.model.Receipt.Fizmod;
 import hu.szamlazz.receipt.requester.model.Receipt.PdfSablon;
+import hu.szamlazz.receipt.requester.model.Receipt.Status;
 import hu.szamlazz.receipt.requester.model.ReceiptRepository;
 import hu.szamlazz.receipt.requester.model.UserData;
 import hu.szamlazz.receipt.requester.model.UserDataRepository;
-import hu.szamlazz.receipt.requester.model.XmlNyugtaCreate;
+import hu.szamlazz.receipt.requester.xml.RequestHandler;
+import hu.szamlazz.receipt.requester.xml.XmlNyugtaCreate;
+import hu.szamlazz.receipt.requester.xml.XmlNyugtaValasz;
 
 @Controller
 public class FMController {
@@ -81,6 +84,7 @@ public class FMController {
         model.addAttribute("pdfSablonList", PdfSablon.values());
         model.addAttribute("fizmodList", Fizmod.values());
         model.addAttribute("receipt", receipt);
+        //TODO hiba/siker kezelése
         return "receipt";
     }
     
@@ -111,24 +115,25 @@ public class FMController {
     	Utils.log(method, "loaded " + receipt);
     	
     	try {
-        	XmlNyugtaCreate xml = new XmlNyugtaCreate(receipt, getUserData(method));
-			Utils.log(RequestHandler.getInstance().mashal(xml));
+        	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, getUserData(method));
+        	String xml = RequestHandler.getInstance().mashal(create);
+			Utils.log(xml);
+			XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml);
+			if(valasz.getSikeres()) {
+				receipt.setStatus(Status.S);
+				//TODO kell a nyugta generált nyugtaszam, hogy lehessen kiirni/letolteni/stornozni
+			}else {
+				receipt.setStatus(Status.H);
+				model.addAttribute("hibakod", valasz.getHibakod());
+				model.addAttribute("hibauzenet", valasz.getHibauzenet());
+			}
+			
+			receipt = receiptRepository.save(receipt);
+			
+			//TODO show nyugtaPdf
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		//response = sendxmltoserver
-		
-		/*Boolean sikeres = false; //= response.getBoolean("sikeres"); 
-		
-		if(sikeres) {
-			receipt.setStatus(Status.S);
-		}else {
-			receipt.setStatus(Status.H);
-		}
-		
-		receipt = receiptRepository.save(receipt);*/
-		
-		//show nyugtaPdf
 		
 		return "redirect:/receipt/" + receipt.getId();
 	}
@@ -138,7 +143,7 @@ public class FMController {
     	//Receipt receipt = receiptRepository.findById(receiptId).orElse(new Receipt());
 		//esponse = sendequesttoseve
     	
-    	//show nyugtaPdf
+    	//TODO show nyugtaPdf
 	}
     
     //ITEM

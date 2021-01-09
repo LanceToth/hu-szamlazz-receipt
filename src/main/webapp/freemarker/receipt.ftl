@@ -4,7 +4,7 @@
 <#assign overpay =  ((receipt.brutto < receipt.fizetesOsszeg)?string("class='error'",""))/>
 <#assign underpay = ((receipt.fizetesOsszeg < receipt.brutto)?string("class='error'",""))/>
 <#assign paid = (receipt.fizetesOsszeg == receipt.brutto)/>
-
+<#-- TODO siker/hiba kezelése -->
 <a href="/list">Vissza a listához</a>
 <#if utils.hasid>
 	<form action="/updatereceipt/${receipt.id}" method="post">

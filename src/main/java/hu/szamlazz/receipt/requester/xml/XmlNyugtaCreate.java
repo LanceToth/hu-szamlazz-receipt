@@ -1,4 +1,4 @@
-package hu.szamlazz.receipt.requester.model;
+package hu.szamlazz.receipt.requester.xml;
 
 import java.util.Set;
 
@@ -6,6 +6,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import hu.szamlazz.receipt.requester.model.Item;
+import hu.szamlazz.receipt.requester.model.Payment;
+import hu.szamlazz.receipt.requester.model.Receipt;
+import hu.szamlazz.receipt.requester.model.UserData;
 
 @XmlRootElement(name = "xmlnyugtacreate")
 @XmlType(propOrder = { "beallitasok", "fejlec", "tetelek", "kifizetesek" })

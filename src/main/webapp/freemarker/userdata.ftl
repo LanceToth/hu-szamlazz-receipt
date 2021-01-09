@@ -6,8 +6,8 @@
 <fieldset>
 <legend>Beállítások</legend>
 	<div class="row">
-		<label for="elotag">Számla agent kulcs</label>
-		<input type=text name="agentKey" value="${(userdata.agentKey)!""}" />
+		<label for="szamlaagentkulcs">Számla agent kulcs</label>
+		<input type=text name="szamlaagentkulcs" value="${(userdata.szamlaagentkulcs)!""}" />
 	</div>
 
 	<input type="submit" value="Mentés">
