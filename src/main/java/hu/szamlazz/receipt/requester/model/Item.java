@@ -46,7 +46,7 @@ public class Item {
 	private Double nettoEgysegar;
 
 	@Column(name = "afakulcs", nullable = false)
-	private Double afakulcs = 27d;
+	private Integer afakulcs = 27;
 
 	@Transient
 	private Double netto = null;
@@ -102,11 +102,11 @@ public class Item {
 		this.nettoEgysegar = nettoEgysegar;
 	}
 
-	public Double getAfakulcs() {
+	public Integer getAfakulcs() {
 		return afakulcs;
 	}
 
-	public void setAfakulcs(Double afakulcs) {
+	public void setAfakulcs(Integer afakulcs) {
 		this.afakulcs = afakulcs;
 	}
 

@@ -39,7 +39,7 @@ public class MvcConfiguration implements WebMvcConfigurer {
 	
 	@Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-        configurer.enable("/index.html");//this refuses to work, ignore -lance
+        configurer.enable("/index.html");
     }
 	
 	@Override

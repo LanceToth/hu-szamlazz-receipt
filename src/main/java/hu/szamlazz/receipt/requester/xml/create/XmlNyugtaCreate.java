@@ -1,4 +1,4 @@
-package hu.szamlazz.receipt.requester.xml;
+package hu.szamlazz.receipt.requester.xml.create;
 
 import java.util.Set;
 
@@ -12,7 +12,7 @@ import hu.szamlazz.receipt.requester.model.Payment;
 import hu.szamlazz.receipt.requester.model.Receipt;
 import hu.szamlazz.receipt.requester.model.UserData;
 
-@XmlRootElement(name = "xmlnyugtacreate")
+@XmlRootElement(name = "xmlnyugtacreate", namespace = "http://www.szamlazz.hu/xmlnyugtacreate")
 @XmlType(propOrder = { "beallitasok", "fejlec", "tetelek", "kifizetesek" })
 public class XmlNyugtaCreate {
 	
