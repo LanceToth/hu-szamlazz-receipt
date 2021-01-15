@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 import hu.szamlazz.receipt.requester.model.Item;
 import hu.szamlazz.receipt.requester.model.Payment;
 import hu.szamlazz.receipt.requester.model.Receipt;
-import hu.szamlazz.receipt.requester.model.UserData;
 
 @XmlRootElement(name = "xmlnyugtacreate", namespace = "http://www.szamlazz.hu/xmlnyugtacreate")
 @XmlType(propOrder = { "beallitasok", "fejlec", "tetelek", "kifizetesek" })
@@ -20,7 +19,7 @@ public class XmlNyugtaCreate {
 	Receipt fejlec;
 	
 	@XmlElement(name = "beallitasok")
-	UserData beallitasok;
+	UserDataCreate beallitasok;
 	
 	@XmlElement(name = "tetel")
 	@XmlElementWrapper(name = "tetelek")
@@ -34,7 +33,7 @@ public class XmlNyugtaCreate {
 		return fejlec.getPayments();
 	}
 
-	public XmlNyugtaCreate(Receipt receipt, UserData userdata) {
+	public XmlNyugtaCreate(Receipt receipt, UserDataCreate userdata) {
 		this.fejlec = receipt;
 		this.beallitasok = userdata;
 	}

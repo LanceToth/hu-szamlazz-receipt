@@ -25,6 +25,7 @@ import hu.szamlazz.receipt.requester.model.UserData;
 import hu.szamlazz.receipt.requester.model.UserDataRepository;
 import hu.szamlazz.receipt.requester.xml.RequestHandler;
 import hu.szamlazz.receipt.requester.xml.XmlNyugtaValasz;
+import hu.szamlazz.receipt.requester.xml.create.UserDataCreate;
 import hu.szamlazz.receipt.requester.xml.create.XmlNyugtaCreate;
 
 @Controller
@@ -114,7 +115,7 @@ public class FMController {
     			.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
     	Utils.log(method, "loaded " + receipt);
     	
-    	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, getUserData(method));
+    	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, new UserDataCreate(getUserData(method)));
     	try {
         	String xml = RequestHandler.getInstance().mashal(create);
         	Utils.log(xml);
@@ -136,7 +137,7 @@ public class FMController {
     	Utils.log(method, "loaded " + receipt);
     	
     	try {
-        	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, getUserData(method));
+        	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, new UserDataCreate(getUserData(method)));
         	String xml = RequestHandler.getInstance().mashal(create);
 			Utils.log(xml);
 			XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml);
