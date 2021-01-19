@@ -5,20 +5,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "xmlnyugtavalasz")
+@XmlRootElement(name = "xmlnyugtavalasz"/*, namespace = "http://www.szamlazz.hu/xmlnyugtavalasz"*/)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlNyugtaValasz {
 
-	@XmlElement(name = "sikeres")
+//	@XmlElement(name = "sikeres")
 	private Boolean sikeres;
 	
-	@XmlElement(name = "hibakod")
+//	@XmlElement(name = "hibakod")
 	private Integer hibakod;
 	
-	@XmlElement(name = "hibauzenet")
+//	@XmlElement(name = "hibauzenet")
 	private String hibauzenet;
 	
-	@XmlElement(name = "nyugtaPdf")
+//	@XmlElement(name = "nyugtaPdf")
 	private String nyugtaPdf;
 
 	public XmlNyugtaValasz() {
@@ -60,8 +60,13 @@ public class XmlNyugtaValasz {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("XmlNyugtaValasz [sikeres=").append(sikeres).append(", hibakod=").append(hibakod)
-				.append(", hibauzenet=").append(hibauzenet).append(", nyugtaPdf=").append(nyugtaPdf.length()).append("]");
+		builder.append("XmlNyugtaValasz [sikeres=").append(sikeres)
+			.append(", hibakod=").append(hibakod)
+			.append(", hibauzenet=").append(hibauzenet);
+		if(nyugtaPdf != null) {
+			builder.append(", nyugtaPdf=").append(nyugtaPdf.length());
+		}
+		builder.append("]");
 		return builder.toString();
 	}
 }

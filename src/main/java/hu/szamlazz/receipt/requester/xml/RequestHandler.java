@@ -1,25 +1,22 @@
 package hu.szamlazz.receipt.requester.xml;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 
 import hu.szamlazz.receipt.requester.controller.Utils;
@@ -28,9 +25,9 @@ public class RequestHandler {
 	
 	private static String URL = "https://www.szamlazz.hu/szamla/";
 	
-	private static RequestHandler instance = null;
+	private static String SESSIONLABEL = "JSESSIONID=";
 	
-	private HttpClient client = HttpClient.newHttpClient();
+	private static RequestHandler instance = null;
 	
 	private String JSESSIONID = null;
 	
@@ -58,6 +55,9 @@ public class RequestHandler {
 		String method = "request";
 		Utils.log(method, "started");
 		
+		String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
+		String CRLF = "\r\n"; // Line separator required by multipart/form-data.
+		
 		 try { 
 			 
 			 URL url = new URL(URL);
@@ -65,33 +65,48 @@ public class RequestHandler {
 			 
 			 connection.setRequestMethod("POST");
 			 connection.setDoOutput(true);
-			 connection.setRequestProperty("Content-Type", "multipart/form-data");
+			 connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 			 connection.setRequestProperty("charset", "utf-8");
 			 
 			 if(JSESSIONID != null) {
-				 connection.setRequestProperty("Cookie", "JSESSIONID=" + JSESSIONID);
-			 	}
+				 connection.setRequestProperty("Cookie", SESSIONLABEL + JSESSIONID);
+			 }
 			 
-			 String requestData = URLEncoder.encode("action-szamla_agent_nyugta_create", "UTF-8") + "=" + URLEncoder.encode(requestBody, "UTF-8");
-			 byte[] requestDataBytes = requestData.getBytes("UTF-8");
-			 connection.setRequestProperty("Content-Length", String.valueOf(requestDataBytes.length));
-			 
+			 try (OutputStream output = connection.getOutputStream();
+					 PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, "utf-8"), true);) {
+				// Send text file.
+				writer.append("--" + boundary).append(CRLF);
+				writer.append("Content-Disposition: form-data; name=\"action-szamla_agent_nyugta_create\"; filename=\"xml.xml\"").append(CRLF);
+				writer.append("Content-Type: text/xml; charset=utf-8").append(CRLF); // Text file itself must be saved in this charset!
+				writer.append(CRLF).flush();
+				writer.append(requestBody).flush();
+				writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
+				
+				// End of multipart/form-data.
+				writer.append("--" + boundary + "--").append(CRLF).flush();
 
-			try (DataOutputStream writer = new DataOutputStream(connection.getOutputStream())) {
-			    writer.write(requestDataBytes);
-
-			    // Always flush and close
-			    writer.flush();
-			    writer.close();
+				writer.close();
 			}
 			
 			try{
-	        	String cookie = connection.getHeaderField("set-cookie");
-		        String sessionId = cookie.substring(11, cookie.indexOf(";")); //JSESSIONID=
-		        
-		        Utils.log(method, "sessionId: " + sessionId);
-		        
-		        setJSESSIONID(sessionId);
+				Map<String,List<String>> headerFields = connection.getHeaderFields();
+				
+				Utils.log(method, "header: " + headerFields);
+				
+				List<String> headerField = headerFields.get("Set-Cookie");
+				
+				Utils.log(method, "headerField: " + headerField);
+				
+	        	for(String cookie: headerField){
+		        	Utils.log(method, "cookie: " + cookie);
+		        	if(cookie.contains(SESSIONLABEL)) {
+		        		int sessionindex = cookie.lastIndexOf(SESSIONLABEL) + SESSIONLABEL.length();
+		        		String sessionId = cookie.substring(sessionindex, cookie.indexOf(";", sessionindex)); //JSESSIONID=
+		        		Utils.log(method, "sessionId: " + sessionId);
+			        
+		        		setJSESSIONID(sessionId);
+		        	}
+	        	}
 	        }catch(Exception ex) {
 	        	Utils.log(method, "error during sessionId retreaval: " + ex);
 	        }
@@ -107,64 +122,19 @@ public class RequestHandler {
 			    }
 			}
 			
-			Utils.log(method, "response content: " + content.toString());
+			Utils.store(content.toString());
 			
-			XmlNyugtaValasz body = unmashal(connection.getInputStream(), XmlNyugtaValasz.class);
+			XmlNyugtaValasz body = unmashal(content.toString(), XmlNyugtaValasz.class);
 			
 			connection.disconnect();
-			
-			/*
-			
-			 	HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-		                .uri(URI.create(URL))
-		                .POST(HttpRequest.BodyPublishers.ofString("action-szamla_agent_nyugta_create=" + requestBody));
-			 	
-			 	if(JSESSIONID != null) {
-			 		requestBuilder.header("Cookie", "JSESSIONID=" + JSESSIONID);
-			 	}
-			 	
-		        HttpRequest request = requestBuilder.build();
-
-		        HttpResponse<String> response = client.send(request,
-		                HttpResponse.BodyHandlers.ofString());
 		        
-		        Utils.log(method, "headers: " + response.headers());
-		        Utils.log(method, "body: " + response.body());
+	        Utils.log(method, "resolved " + body);
 		        
-		        try{
-		        	String cookie = response.headers().map().get("set-cookie").get(0);
-			        String sessionId = cookie.substring(11, cookie.indexOf(";")); //JSESSIONID=
-			        
-			        Utils.log(method, "sessionId: " + sessionId);
-			        
-			        setJSESSIONID(sessionId);
-		        }catch(Exception ex) {
-		        	Utils.log(method, "error during sessionId retreaval: " + ex);
-		        }
-		        
-		        XmlNyugtaValasz body = unmashal(response.body(), XmlNyugtaValasz.class);*/
-		        
-		        Utils.log(method, "resolved " + body);
-		        
-		        return body;
-			 
-		        /*URL url = new URL("https://www.szamlazz.hu/szamla/");
-		        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		        connection.setDoOutput(true);
-		        connection.setInstanceFollowRedirects(false);
-		        connection.setRequestMethod("POST");
-		        connection.setRequestProperty("Content-Type", "application/xml");
-
-		        OutputStream os = connection.getOutputStream();
-		        // Write your XML to the OutputStream (JAXB is used in this example)
-		        jaxbContext.createMarshaller().marshal(customer, os);
-		        os.flush();
-		        connection.getResponseCode();
-		        connection.disconnect();*/
-		    } catch(Exception e) {
-		    	Utils.log(method, e.toString());
-		        throw new RuntimeException(e);
-		    }
+	        return body;
+	    } catch(Exception e) {
+	    	Utils.log(method, e.toString());
+	        throw new RuntimeException(e);
+	    }
 	}
 	
 	public String mashal(Object object) throws JAXBException {

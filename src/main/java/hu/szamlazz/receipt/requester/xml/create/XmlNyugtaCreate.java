@@ -11,7 +11,7 @@ import hu.szamlazz.receipt.requester.model.Item;
 import hu.szamlazz.receipt.requester.model.Payment;
 import hu.szamlazz.receipt.requester.model.Receipt;
 
-@XmlRootElement(name = "xmlnyugtacreate", namespace = "http://www.szamlazz.hu/xmlnyugtacreate")
+@XmlRootElement(name = "xmlnyugtacreate"/*, namespace = "http://www.szamlazz.hu/xmlnyugtacreate"*/)
 @XmlType(propOrder = { "beallitasok", "fejlec", "tetelek", "kifizetesek" })
 public class XmlNyugtaCreate {
 	
