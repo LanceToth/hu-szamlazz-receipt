@@ -1,3 +1,4 @@
+<link rel='stylesheet' href='/css/form.css' />
 <a href="/addreceipt">Új nyugta</a>
 <a href="/userdata" style="float: right;">Beállítások</a>
 <#list receipts>
@@ -8,6 +9,7 @@
 			<th>Előtag</th>
 			<th>Fizetési mód</th>
 			<th>Bruttó összeg</th>
+			<th>Státusz</th>
 		</tr>
 		<#items as receipt>
 			<tr>
@@ -16,6 +18,7 @@
 				<td><a href="/receipt/${receipt.id}">${receipt.elotag}</a></td>
 				<td><a href="/receipt/${receipt.id}">${receipt.fizmod}</a></td>
 				<td><a href="/receipt/${receipt.id}">${receipt.brutto} ${receipt.penznem}</a></td>
+				<td><a href="/receipt/${receipt.id}"  class="${(receipt.status)!""}">${receipt.status.description}</a></td>
 			</tr>
 		</#items>
 	</table>

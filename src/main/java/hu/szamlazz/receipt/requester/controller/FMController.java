@@ -85,7 +85,6 @@ public class FMController {
         model.addAttribute("pdfSablonList", PdfSablon.values());
         model.addAttribute("fizmodList", Fizmod.values());
         model.addAttribute("receipt", receipt);
-        //TODO hiba/siker kezelése
         return "receipt";
     }
     
@@ -152,20 +151,35 @@ public class FMController {
 			
 			receipt = receiptRepository.save(receipt);
 			
-			//TODO show nyugtaPdf
+			model.addAttribute("pdf", valasz.getNyugtaPdf());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		
-		return "redirect:/receipt/" + receipt.getId();
+        //TODO hiba/siker popup
+    	//TODO külön fül helyett töltse újra a receipt-et a hiba/siker/pdf mezőkkel
+    	//TODO jelenjen meg a megfelelő felugró ablak, ha ki van töltve valamelyik mező
+    	//TODO siker popup tartalmazzon egy linket, ami külön ablakban megnyitja a pdf-et
+		return "pdf";
 	}
     
     @RequestMapping("/download/{id}")
-	void downloadPdf(Model model, @PathVariable(value = "id") Long receiptId) {
-    	//Receipt receipt = receiptRepository.findById(receiptId).orElse(new Receipt());
-		//esponse = sendequesttoseve
+	String downloadPdf(Model model, @PathVariable(value = "id") Long receiptId) {
+    	String method = "downloadPdf";
+    	Utils.log(method, "started");
     	
-    	//TODO show nyugtaPdf
+    	Receipt receipt = receiptRepository.findById(receiptId)
+    			.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
+    	Utils.log(method, "loaded " + receipt);
+    	
+    	
+    	//TODO XmlNyugtaGet get = new XmlNyugtaGet(receipt, new UserDataGet(getUserData(method)));
+    	String xml = "";//RequestHandler.getInstance().mashal(get);
+    	
+    	XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml);
+    	
+    	model.addAttribute("pdf", valasz.getNyugtaPdf());
+    	
+    	return "pdf";
 	}
     
     //ITEM
@@ -205,7 +219,7 @@ public class FMController {
 		
 		Utils.log(method, "saved " + item);
 		
-		return "redirect:/receipt/" + item.getReceipt().getId();
+		return "redirect:/item/" + item.getId();
 	}
     
     @RequestMapping("/item/{id}")

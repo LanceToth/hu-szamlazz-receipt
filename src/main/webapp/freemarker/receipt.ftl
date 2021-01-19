@@ -3,7 +3,7 @@
 <@utils.disablefields receipt.id receipt.status/>
 <#assign overpay =  ((receipt.brutto < receipt.fizetesOsszeg)?string("class='error'",""))/>
 <#assign underpay = ((receipt.fizetesOsszeg < receipt.brutto)?string("class='error'",""))/>
-<#assign paid = (receipt.fizetesOsszeg == receipt.brutto)/>
+<#assign paid = (receipt.fizetesOsszeg > 0 && receipt.fizetesOsszeg == receipt.brutto)/>
 <#-- TODO siker/hiba kezelése -->
 <a href="/list">Vissza a listához</a>
 <#if utils.hasid>
@@ -47,18 +47,18 @@
 	
 	<div class="row">
 		<label for="brutto">Bruttó</label>
-		<span id="brutto" ${overpay}>${(receipt.brutto)!0}</span>
+		<span id="brutto" ${overpay}>${(receipt.brutto)!0} ${receipt.penznem}</span>
 	</div>
 	<div class="row">
 		<label for="fizosszeg">Fizetett összeg</label>
-		<span id="fizosszeg" ${underpay}>${(receipt.fizetesOsszeg)!0}</span>
+		<span id="fizosszeg" ${underpay}>${(receipt.fizetesOsszeg)!0} ${receipt.penznem}</span>
 	</div>
 	
 	<input type="submit" value="Mentés">
 
 <#if !utils.disabled && utils.hasid && paid>
-	<br /><a href="/sendreceipt/${receipt.id}">Küldés</a>
-		<br /><a href="/export/${receipt.id}">Export</a>
+	<br /><a href="javascript:window.open('/sendreceipt/${receipt.id}');setTimeout(function() {location.reload()}, 2000);">Küldés</a>
+		<br /><a href="/export/${receipt.id}" target="_blank">Export</a>
 </#if>
 </fieldset>
 </form>

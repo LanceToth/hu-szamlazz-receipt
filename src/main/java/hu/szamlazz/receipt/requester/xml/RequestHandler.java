@@ -43,14 +43,6 @@ public class RequestHandler {
 		return instance;
 	}
 
-	public String getJSESSIONID() {
-		return JSESSIONID;
-	}
-
-	public void setJSESSIONID(String jSESSIONID) {
-		JSESSIONID = jSESSIONID;
-	}
-	
 	public XmlNyugtaValasz request(String requestBody) {
 		String method = "request";
 		Utils.log(method, "started");
@@ -88,28 +80,30 @@ public class RequestHandler {
 				writer.close();
 			}
 			
-			try{
-				Map<String,List<String>> headerFields = connection.getHeaderFields();
-				
-				Utils.log(method, "header: " + headerFields);
-				
-				List<String> headerField = headerFields.get("Set-Cookie");
-				
-				Utils.log(method, "headerField: " + headerField);
-				
-	        	for(String cookie: headerField){
-		        	Utils.log(method, "cookie: " + cookie);
-		        	if(cookie.contains(SESSIONLABEL)) {
-		        		int sessionindex = cookie.lastIndexOf(SESSIONLABEL) + SESSIONLABEL.length();
-		        		String sessionId = cookie.substring(sessionindex, cookie.indexOf(";", sessionindex)); //JSESSIONID=
-		        		Utils.log(method, "sessionId: " + sessionId);
-			        
-		        		setJSESSIONID(sessionId);
+			if(JSESSIONID == null) {
+				try{
+					Map<String,List<String>> headerFields = connection.getHeaderFields();
+					
+					Utils.log(method, "header: " + headerFields);
+					
+					List<String> headerField = headerFields.get("Set-Cookie");
+					
+					Utils.log(method, "headerField: " + headerField);
+					
+		        	for(String cookie: headerField){
+			        	Utils.log(method, "cookie: " + cookie);
+			        	if(cookie.contains(SESSIONLABEL)) {
+			        		int sessionindex = cookie.lastIndexOf(SESSIONLABEL) + SESSIONLABEL.length();
+			        		String sessionId = cookie.substring(sessionindex, cookie.indexOf(";", sessionindex)); //JSESSIONID=
+			        		Utils.log(method, "sessionId: " + sessionId);
+				        
+			        		JSESSIONID = sessionId;
+			        	}
 		        	}
-	        	}
-	        }catch(Exception ex) {
-	        	Utils.log(method, "error during sessionId retreaval: " + ex);
-	        }
+		        }catch(Exception ex) {
+		        	Utils.log(method, "error during sessionId retreaval: " + ex);
+		        }
+			}
 			
 			StringBuilder content;
 			try (BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
@@ -129,7 +123,7 @@ public class RequestHandler {
 			connection.disconnect();
 		        
 	        Utils.log(method, "resolved " + body);
-		        
+	        
 	        return body;
 	    } catch(Exception e) {
 	    	Utils.log(method, e.toString());

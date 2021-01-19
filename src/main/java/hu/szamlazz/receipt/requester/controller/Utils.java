@@ -20,12 +20,16 @@ public class Utils {
     	System.out.println("==" + new Date() + (method != null? " Method: " + method: "") + " " + message);
     }
     
-public static boolean store(String content) throws FileNotFoundException, IOException  {
+    public static boolean store(String content) throws FileNotFoundException, IOException  {
+    	return store(content, "log");
+    }
+    
+    public static boolean store(String content, String filename) throws FileNotFoundException, IOException  {
 		
 		File subfolder = new File("/szamlazz/log");
 		subfolder.mkdirs();
 		
-		File target = new File(subfolder, "log" + (new Date()).getTime() + ".log");
+		File target = new File(subfolder, filename + (new Date()).getTime() + ".log");
 		target.createNewFile();
 		
 		FileOutputStream fileOut = new FileOutputStream(target);
