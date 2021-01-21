@@ -4,21 +4,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "xmlnyugtavalasz"/*, namespace = "http://www.szamlazz.hu/xmlnyugtavalasz"*/)
+@XmlRootElement(name = "xmlnyugtavalasz")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlNyugtaValasz {
 
-//	@XmlElement(name = "sikeres")
 	private Boolean sikeres;
 	
-//	@XmlElement(name = "hibakod")
 	private Integer hibakod;
 	
-//	@XmlElement(name = "hibauzenet")
 	private String hibauzenet;
 	
-//	@XmlElement(name = "nyugtaPdf")
 	private String nyugtaPdf;
+	
+	private Nyugta nyugta;
 
 	public XmlNyugtaValasz() {
 		super();
@@ -56,6 +54,21 @@ public class XmlNyugtaValasz {
 		this.nyugtaPdf = nyugtaPdf;
 	}
 
+	public Nyugta getNyugta() {
+		return nyugta;
+	}
+
+	public void setNyugta(Nyugta nyugta) {
+		this.nyugta = nyugta;
+	}
+	
+	public String getNyugtaszam() {
+		if(nyugta != null) {
+			return nyugta.getNyugtaszam();
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -65,7 +78,46 @@ public class XmlNyugtaValasz {
 		if(nyugtaPdf != null) {
 			builder.append(", nyugtaPdf=").append(nyugtaPdf.length());
 		}
+		if(nyugta != null && nyugta.getAlap() != null && nyugta.getAlap().getNyugtaszam() != null) {
+			builder.append(", nyugtaszam=").append(nyugta.getAlap().getNyugtaszam());
+		}
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	@XmlRootElement(name = "nyugta")
+	@XmlAccessorType(XmlAccessType.FIELD)
+	public static class Nyugta{
+		Alap alap;
+
+		public Alap getAlap() {
+			return alap;
+		}
+
+		public void setAlap(Alap alap) {
+			this.alap = alap;
+		}
+
+		public String getNyugtaszam() {
+			if(alap != null) {
+				return alap.getNyugtaszam();
+			}
+			return null;
+		}
+		
+	}
+	
+	@XmlRootElement(name = "alap")
+	@XmlAccessorType(XmlAccessType.FIELD)
+	public static class Alap{
+		String nyugtaszam;
+
+		public String getNyugtaszam() {
+			return nyugtaszam;
+		}
+
+		public void setNyugtaszam(String nyugtaszam) {
+			this.nyugtaszam = nyugtaszam;
+		}
 	}
 }

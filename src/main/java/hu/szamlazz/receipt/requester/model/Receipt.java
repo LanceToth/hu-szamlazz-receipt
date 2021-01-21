@@ -56,6 +56,9 @@ public class Receipt {
 	@Column(name = "status", nullable = false)
 	private Status status = Status.F;
 	
+	@Column(name = "nyugtaszam")
+	private String nyugtaszam;
+	
 	@Transient
 	Double brutto;
 
@@ -158,6 +161,14 @@ public class Receipt {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public String getNyugtaszam() {
+		return nyugtaszam;
+	}
+
+	public void setNyugtaszam(String nyugtaszam) {
+		this.nyugtaszam = nyugtaszam;
 	}
 
 	public void copy(Receipt source) {

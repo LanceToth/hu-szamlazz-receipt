@@ -1,10 +1,19 @@
 <#import "utils.ftl" as utils />
 <link rel='stylesheet' href='/css/form.css' />
-<@utils.disablefields receipt.id receipt.status/>
-<#assign overpay =  ((receipt.brutto < receipt.fizetesOsszeg)?string("class='error'",""))/>
-<#assign underpay = ((receipt.fizetesOsszeg < receipt.brutto)?string("class='error'",""))/>
-<#assign paid = (receipt.fizetesOsszeg > 0 && receipt.fizetesOsszeg == receipt.brutto)/>
-<#-- TODO siker/hiba kezelése -->
+<@utils.disablefields receipt.id receipt.status />
+<#assign overpay =  ((receipt.brutto < receipt.fizetesOsszeg)?string("class='error'","")) />
+<#assign underpay = ((receipt.fizetesOsszeg < receipt.brutto)?string("class='error'","")) />
+<#assign paid = (receipt.fizetesOsszeg > 0 && receipt.fizetesOsszeg == receipt.brutto) />
+
+<#-- siker/hiba kezelése -->
+<#if sikeres??>
+	<#assign message = (sikeres?string((receipt.nyugtaszam)!"nyugtaszam", (hibauzenet)!"")) />
+	<@popup sikeres message />
+	<#if pdf??>
+		<@utils.pdfwindow pdf />
+	</#if>
+</#if>
+
 <a href="/list">Vissza a listához</a>
 <#if utils.hasid>
 	<form action="/updatereceipt/${receipt.id}" method="post">
@@ -20,6 +29,10 @@
 	<div class="row">
 		<label for="kelt">Kelt</label>
 		<input type=date name="kelt" value="${(receipt.kelt)!""}" disabled/>
+	</div>
+	<div class="row">
+		<label for="nyugtaszam">Nyugtaszám</label>
+		<input type=text name="nyugtaszam" value="${(receipt.nyugtaszam)!""}" disabled/>
 	</div>
 	<div class="row">
 		<label for="elotag">Előtag</label>
@@ -57,8 +70,8 @@
 	<input type="submit" value="Mentés">
 
 <#if !utils.disabled && utils.hasid && paid>
-	<br /><a href="javascript:window.open('/sendreceipt/${receipt.id}');setTimeout(function() {location.reload()}, 2000);">Küldés</a>
-		<br /><a href="/export/${receipt.id}" target="_blank">Export</a>
+	<br /><a href="/sendreceipt/${receipt.id}">Küldés</a>
+	<br /><a href="/export/${receipt.id}" target="_blank">Export</a>
 </#if>
 </fieldset>
 </form>
@@ -117,12 +130,16 @@
 
 <#macro popup success message>
 <div class="popup">
-	<#if (success) == true>
+	<div onclick="this.parentNode.classList.toggle('hidden');" class="closer">X</div>
+	<#if (success!false) == true>
 		SIKERES TRANZAKCIÓ
-		Nyugtaszám: ${message}
+		<br />
+		<br />Nyugtaszám: ${message!""}
+		<br /><a href="javascript:document.getElementById('pdfwindow').classList.toggle('hidden');">PDF letöltés</a>
 	<#else>
 		SIKERTELEN TRANZAKCIÓ
-		Hibaüzenet: ${message}
+		<br />
+		<br />Hibaüzenet: ${message!""}
 	</#if>
 </div>
 </#macro>

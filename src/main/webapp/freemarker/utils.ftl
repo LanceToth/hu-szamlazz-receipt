@@ -6,6 +6,13 @@
 </select>
 </#macro>
 
+<#macro pdfwindow pdf>
+<div id="pdfwindow" class="pdfwindow hidden">
+	<div onclick="this.parentNode.classList.toggle('hidden');" class="closer">X</div>
+	<object type="application/pdf" id="pdf" style="width: 100%; height: 100%" data="data:application/pdf;base64,${pdf!""}"></object>
+</div>
+</#macro>
+
 <#macro disablefields id status>
 <#assign hasid = (0 != (id)!0) />
 <#assign receiptsent = ("S" == (status)!"") />

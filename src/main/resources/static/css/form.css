@@ -30,3 +30,48 @@ input, label{
 .error{
 	color: red;
 }
+
+.hidden {
+  display: none;
+}
+
+.pdfwindow{
+	position:absolute;
+	z-index: 2;
+	top:50vh;
+	left:50vw;
+	width:90vw;
+	height:90vh;
+	margin-left:-45vw;
+	margin-top:-45vh;
+}
+
+.popup{
+	border: 2px solid black;
+	background: white;
+	position:absolute;
+	z-index: 1;
+	top:50vh;
+	left:50vw;
+	width:200px;
+	height:150px;
+	margin-left:-100px;
+	margin-top:-75px;
+}
+
+.closer{
+	cursor:  pointer;
+	font-family: Arial, sans-serif;
+	
+	background: maroon;
+	color: white;
+	
+	text-align: center;
+	line-height: 1em;
+	
+	height: 1em;
+	width: 1em;
+	position: absolute;
+	top: 0;
+	right: 0;
+}

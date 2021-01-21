@@ -74,6 +74,9 @@ public class FMController {
     	String method = "getReceipt";
     	Utils.log(method, "started");
     	
+    	Utils.log(method, "model is " + model.toString());
+    	Utils.log(method, "model is " + model.asMap().toString());
+    	
     	if(receiptId == null) {
     		return "addreceipt";
     	}
@@ -139,10 +142,16 @@ public class FMController {
         	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, new UserDataCreate(getUserData(method)));
         	String xml = RequestHandler.getInstance().mashal(create);
 			Utils.log(xml);
+			
 			XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml);
+			
+			model.addAttribute("sikeres", valasz.getSikeres());
+			
 			if(valasz.getSikeres()) {
 				receipt.setStatus(Status.S);
-				//TODO kell a nyugta generált nyugtaszam, hogy lehessen kiirni/letolteni/stornozni
+				receipt.setNyugtaszam(valasz.getNyugtaszam());
+				
+				model.addAttribute("pdf", valasz.getNyugtaPdf());
 			}else {
 				receipt.setStatus(Status.H);
 				model.addAttribute("hibakod", valasz.getHibakod());
@@ -150,16 +159,11 @@ public class FMController {
 			}
 			
 			receipt = receiptRepository.save(receipt);
-			
-			model.addAttribute("pdf", valasz.getNyugtaPdf());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-        //TODO hiba/siker popup
-    	//TODO külön fül helyett töltse újra a receipt-et a hiba/siker/pdf mezőkkel
-    	//TODO jelenjen meg a megfelelő felugró ablak, ha ki van töltve valamelyik mező
-    	//TODO siker popup tartalmazzon egy linket, ami külön ablakban megnyitja a pdf-et
-		return "pdf";
+        
+    	return "forward:/receipt/" + receipt.getId();
 	}
     
     @RequestMapping("/download/{id}")
@@ -179,7 +183,7 @@ public class FMController {
     	
     	model.addAttribute("pdf", valasz.getNyugtaPdf());
     	
-    	return "pdf";
+    	return "forward:/list";
 	}
     
     //ITEM
