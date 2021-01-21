@@ -43,7 +43,7 @@ public class RequestHandler {
 		return instance;
 	}
 
-	public XmlNyugtaValasz request(String requestBody) {
+	public XmlNyugtaValasz request(String requestBody, String requestName) {
 		String method = "request";
 		Utils.log(method, "started");
 		
@@ -68,7 +68,7 @@ public class RequestHandler {
 					 PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, "utf-8"), true);) {
 				// Send text file.
 				writer.append("--" + boundary).append(CRLF);
-				writer.append("Content-Disposition: form-data; name=\"action-szamla_agent_nyugta_create\"; filename=\"xml.xml\"").append(CRLF);
+				writer.append("Content-Disposition: form-data; name=\"" + requestName + "\"; filename=\"xml.xml\"").append(CRLF);
 				writer.append("Content-Type: text/xml; charset=utf-8").append(CRLF); // Text file itself must be saved in this charset!
 				writer.append(CRLF).flush();
 				writer.append(requestBody).flush();
@@ -131,7 +131,7 @@ public class RequestHandler {
 	    }
 	}
 	
-	public String mashal(Object object) throws JAXBException {
+	public String marshal(Object object) throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(object.getClass());
 	    Marshaller mar= context.createMarshaller();
 	    mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -143,7 +143,7 @@ public class RequestHandler {
 	    return sw.toString();
 	}
 	
-	public <T> T unmashal(Reader reader, Class<T> target) throws JAXBException {
+	public <T> T unmarshal(Reader reader, Class<T> target) throws JAXBException {
 		JAXBContext context = JAXBContext.newInstance(target);
 	    Unmarshaller mar= context.createUnmarshaller();
 	    
@@ -152,16 +152,16 @@ public class RequestHandler {
 	    return target.cast(result);
 	}
 	
-	public <T> T unmashal(InputStream stream, Class<T> target) throws JAXBException {
+	public <T> T unmarshal(InputStream stream, Class<T> target) throws JAXBException {
 	    InputStreamReader reader = new InputStreamReader(stream);
 	    
-	    return unmashal(reader, target);
+	    return unmarshal(reader, target);
 	}
 	
 	public <T> T unmashal(String xml, Class<T> target) throws JAXBException {
 		StringReader reader = new StringReader(xml);
 		
-		return unmashal(reader, target);
+		return unmarshal(reader, target);
 	}
 
 }

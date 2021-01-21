@@ -10,7 +10,7 @@
 	<#assign message = (sikeres?string((receipt.nyugtaszam)!"nyugtaszam", (hibauzenet)!"")) />
 	<@popup sikeres message />
 	<#if pdf??>
-		<@utils.pdfwindow pdf />
+		<@utils.pdfwindow pdf true/>
 	</#if>
 </#if>
 

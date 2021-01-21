@@ -6,8 +6,8 @@
 </select>
 </#macro>
 
-<#macro pdfwindow pdf>
-<div id="pdfwindow" class="pdfwindow hidden">
+<#macro pdfwindow pdf hidden>
+<div id="pdfwindow" class="pdfwindow <#if hidden!true>hidden</#if>">
 	<div onclick="this.parentNode.classList.toggle('hidden');" class="closer">X</div>
 	<object type="application/pdf" id="pdf" style="width: 100%; height: 100%" data="data:application/pdf;base64,${pdf!""}"></object>
 </div>

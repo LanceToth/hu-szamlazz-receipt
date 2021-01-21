@@ -8,8 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,7 +20,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "userdata")
 @EntityListeners(AuditingEntityListener.class)
-@XmlRootElement(name = "beallitasok")
 public class UserData {
 	
 	@Id
@@ -39,7 +36,6 @@ public class UserData {
 	@Transient
 	private Boolean pdfLetoltes = true;
 	
-	@XmlTransient
 	public long getId() {
 		return id;
 	}

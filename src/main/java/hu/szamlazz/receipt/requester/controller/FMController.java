@@ -25,8 +25,8 @@ import hu.szamlazz.receipt.requester.model.UserData;
 import hu.szamlazz.receipt.requester.model.UserDataRepository;
 import hu.szamlazz.receipt.requester.xml.RequestHandler;
 import hu.szamlazz.receipt.requester.xml.XmlNyugtaValasz;
-import hu.szamlazz.receipt.requester.xml.create.UserDataCreate;
 import hu.szamlazz.receipt.requester.xml.create.XmlNyugtaCreate;
+import hu.szamlazz.receipt.requester.xml.get.XmlNyugtaGet;
 
 @Controller
 public class FMController {
@@ -40,6 +40,9 @@ public class FMController {
     public String getAllReceipts(Model model) {
     	String method = "getAllReceipts";
     	Utils.log(method, "started");
+    	
+    	Utils.log(method, "model is " + model.toString());
+    	Utils.log(method, "model is " + model.asMap().toString());
     	
     	List<Receipt> list = receiptRepository.findAll(Sort.by("id"));
     	Utils.log(method, "loaded " + list.size());
@@ -117,9 +120,9 @@ public class FMController {
     			.orElseThrow(() -> new IllegalArgumentException("Receipt " + receiptId + " not found"));
     	Utils.log(method, "loaded " + receipt);
     	
-    	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, new UserDataCreate(getUserData(method)));
+    	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, getUserData(method));
     	try {
-        	String xml = RequestHandler.getInstance().mashal(create);
+        	String xml = RequestHandler.getInstance().marshal(create);
         	Utils.log(xml);
 			model.addAttribute("xml", xml);
 		} catch (JAXBException e) {
@@ -139,11 +142,11 @@ public class FMController {
     	Utils.log(method, "loaded " + receipt);
     	
     	try {
-        	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, new UserDataCreate(getUserData(method)));
-        	String xml = RequestHandler.getInstance().mashal(create);
+        	XmlNyugtaCreate create = new XmlNyugtaCreate(receipt, getUserData(method));
+        	String xml = RequestHandler.getInstance().marshal(create);
 			Utils.log(xml);
 			
-			XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml);
+			XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml, "action-szamla_agent_nyugta_create");
 			
 			model.addAttribute("sikeres", valasz.getSikeres());
 			
@@ -176,12 +179,17 @@ public class FMController {
     	Utils.log(method, "loaded " + receipt);
     	
     	
-    	//TODO XmlNyugtaGet get = new XmlNyugtaGet(receipt, new UserDataGet(getUserData(method)));
-    	String xml = "";//RequestHandler.getInstance().mashal(get);
+		try {
+			XmlNyugtaGet get = new XmlNyugtaGet(getUserData(method), receipt.getNyugtaszam());
+			 String xml = RequestHandler.getInstance().marshal(get);
+			 Utils.log(xml);
     	
-    	XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml);
+			XmlNyugtaValasz valasz = RequestHandler.getInstance().request(xml, "action-szamla_agent_nyugta_get");
     	
-    	model.addAttribute("pdf", valasz.getNyugtaPdf());
+    		model.addAttribute("pdf", valasz.getNyugtaPdf());
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
     	
     	return "forward:/list";
 	}
