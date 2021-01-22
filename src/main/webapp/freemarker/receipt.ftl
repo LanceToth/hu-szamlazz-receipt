@@ -71,7 +71,7 @@
 
 <#if !utils.disabled && utils.hasid && paid>
 	<br /><a href="/sendreceipt/${receipt.id}">Küldés</a>
-	<br /><a href="/export/${receipt.id}" target="_blank">Export</a>
+	<#--br /><a href="/export/${receipt.id}" target="_blank">Export</a-->
 </#if>
 </fieldset>
 </form>
